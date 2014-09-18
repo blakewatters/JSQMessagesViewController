@@ -17,6 +17,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JSQMessagesViewController.h"
 
 /**
  *  An instance of `JSQMessagesComposerTextView` is a subclass of `UITextView` that is styled and used 

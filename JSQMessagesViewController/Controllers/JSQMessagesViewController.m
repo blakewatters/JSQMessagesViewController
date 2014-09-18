@@ -285,9 +285,9 @@ static void * kJSQMessagesKeyValueObservingContext = &kJSQMessagesKeyValueObserv
     UITextView *textView = self.inputToolbar.contentView.textView;
     textView.text = nil;
     
-    [self.inputToolbar toggleSendButtonEnabled];
+    //[self.inputToolbar toggleSendButtonEnabled];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:textView];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:UITextViewTextDidChangeNotification object:textView];
     
     [self.collectionView.collectionViewLayout invalidateLayoutWithContext:[JSQMessagesCollectionViewFlowLayoutInvalidationContext context]];
     [self.collectionView reloadData];

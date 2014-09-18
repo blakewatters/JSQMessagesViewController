@@ -54,7 +54,7 @@
 
 + (UIImageView *)bubbleImageViewWithColor:(UIColor *)color flippedForIncoming:(BOOL)flippedForIncoming
 {
-    UIImage *bubble = [UIImage imageNamed:@"bubble_min"];
+    UIImage *bubble = [UIImage imageNamed:@"summit_bubble_small"];
     
     UIImage *normalBubble = [bubble jsq_imageMaskedWithColor:color];
     UIImage *highlightedBubble = [bubble jsq_imageMaskedWithColor:[color jsq_colorByDarkeningColorWithValue:0.12f]];
@@ -64,7 +64,7 @@
         highlightedBubble = [JSQMessagesBubbleImageFactory jsq_horizontallyFlippedImageFromImage:highlightedBubble];
     }
     
-    // make image stretchable from center point
+    // make image stretchable from center point. Adjust for different bubble shape.
     CGPoint center = CGPointMake(bubble.size.width / 2.0f, bubble.size.height / 2.0f);
     UIEdgeInsets capInsets = UIEdgeInsetsMake(center.y, center.x, center.y, center.x);
     

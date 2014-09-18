@@ -71,6 +71,10 @@
             && ([self.date compare:aMessage.date] == NSOrderedSame);
 }
 
+- (BOOL)wasSentByUserWithId:(NSString *)id {
+    return [self.sender isEqualToString:id];
+}
+
 #pragma mark - NSObject
 
 - (BOOL)isEqual:(id)object

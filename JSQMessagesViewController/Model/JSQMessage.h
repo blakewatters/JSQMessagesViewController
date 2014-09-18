@@ -76,4 +76,11 @@
  */
 - (BOOL)isEqualToMessage:(JSQMessage *)aMessage;
 
+/*
+ * Returns a boolean to indicate whether the message was sent by the person with the passed in id.
+ 
+*/
+
+- (BOOL)wasSentByUserWithId:(NSString *)id;
+
 @end

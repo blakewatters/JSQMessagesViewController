@@ -68,6 +68,10 @@ FOUNDATION_EXPORT const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingD
  */
 @property (assign, nonatomic) CGFloat rightBarButtonItemWidth;
 
+@property (nonatomic, retain) IBOutlet UIButton *sendButton;
+
+-(IBAction)sendButtonWasPressed:(id)sender;
+
 #pragma mark - Class methods
 
 /**

@@ -174,9 +174,14 @@
         self.textView.font = customAttributes.messageBubbleFont;
     }
     
-    if (!UIEdgeInsetsEqualToEdgeInsets(self.textView.textContainerInset, customAttributes.textViewTextContainerInsets)) {
-        self.textView.textContainerInset = customAttributes.textViewTextContainerInsets;
-    }
+//    if (!UIEdgeInsetsEqualToEdgeInsets(self.textView.textContainerInset, customAttributes.textViewTextContainerInsets)) {
+//        self.textView.textContainerInset = customAttributes.textViewTextContainerInsets;
+//    }
+    self.textView.textContainerInset = UIEdgeInsetsMake(8.0, 8.0, 3.0, 0.0);
+    
+    
+    //self.textView.layer.borderColor = [[UIColor blackColor] CGColor];
+    //self.textView.layer.borderWidth = 1.0f;
     
     self.textViewFrameInsets = customAttributes.textViewFrameInsets;
 

@@ -164,6 +164,12 @@ const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingDefault = 4.0f;
     self.rightBarButtonContainerViewWidthConstraint.constant = rightBarButtonItemWidth;
     [self setNeedsUpdateConstraints];
 }
+-(IBAction)sendButtonWasPressed:(id)sender {
+    if (![self.textView.text isEqualToString:@""] && ![self.textView.text isEqualToString:@"Start Typing..."]) {
+        JSQMessagesViewController *controller = (JSQMessagesViewController *)[self currentController];
+        [controller didPressSendButton:nil withMessageText:self.textView.text sender:controller.sender date:[NSDate date]];
+    }
+}
 
 #pragma mark - Getters
 
@@ -184,5 +190,27 @@ const CGFloat kJSQMessagesToolbarContentViewHorizontalSpacingDefault = 4.0f;
     [super setNeedsDisplay];
     [self.textView setNeedsDisplay];
 }
+
+#pragma mark helpers
+
+- (UIViewController*) currentController {
+    return [self topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
+- (UIViewController*)topViewControllerWithRootViewController:(UIViewController*)rootViewController {
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController* tabBarController = (UITabBarController*)rootViewController;
+        return [self topViewControllerWithRootViewController:tabBarController.selectedViewController];
+    } else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController* navigationController = (UINavigationController*)rootViewController;
+        return [self topViewControllerWithRootViewController:navigationController.visibleViewController];
+    } else if (rootViewController.presentedViewController) {
+        UIViewController* presentedViewController = rootViewController.presentedViewController;
+        return [self topViewControllerWithRootViewController:presentedViewController];
+    } else {
+        return rootViewController;
+    }
+}
+
 
 @end

@@ -21,6 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "NSString+JSQMessages.h"
+#import "JSQMessagesToolbarContentView.h"
 
 
 @interface JSQMessagesComposerTextView ()
@@ -69,7 +70,7 @@
     self.dataDetectorTypes = UIDataDetectorTypeNone;
     self.keyboardAppearance = UIKeyboardAppearanceDefault;
     self.keyboardType = UIKeyboardTypeDefault;
-    self.returnKeyType = UIReturnKeyDefault;
+    self.returnKeyType = UIReturnKeySend;
     
     self.text = nil;
     
@@ -161,12 +162,38 @@
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
+}
+
+- (void)textViewDidBeginEditing:(NSNotification *)notification {
+    if ([self.text isEqualToString:self.placeHolder]) {
+        self.textColor = [UIColor colorWithRed:160/255.0 green:160/255.0 blue:160/255.0 alpha:1.0];
+        self.text = @"";
+    }
     
+    CGFloat topCorrect = ([self bounds].size.height - [self contentSize].height * [self zoomScale])/2.0;
+    topCorrect = ( topCorrect < 0.0 ? 0.0 : topCorrect );
+    self.contentOffset = (CGPoint){ .x = 0, .y = -topCorrect };
+}
+
+- (void)textViewDidEndEditing:(NSNotification *)notification {
     if ([self.text length] == 0 && self.placeHolder) {
-        [self.placeHolderTextColor set];
+        self.textColor = self.placeHolderTextColor;
+        self.text = self.placeHolder;
+    }
+    CGFloat topCorrect = ([self bounds].size.height - [self contentSize].height * [self zoomScale])/2.0;
+    topCorrect = ( topCorrect < 0.0 ? 0.0 : topCorrect );
+    self.contentOffset = (CGPoint){ .x = 0, .y = -topCorrect };
+}
+
+- (void)textViewDidChange:(NSNotification *)notification {
+    if([self.text rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]].location != NSNotFound ) {
+        // send message
+    
+        self.text = [self.text substringToIndex:[self.text length] - 1];
+        JSQMessagesToolbarContentView *contentView = (JSQMessagesToolbarContentView *)self.superview;
+        [contentView sendButtonWasPressed:nil];
         
-        [self.placeHolder drawInRect:CGRectInset(rect, 7.0f, 5.0f)
-                      withAttributes:[self jsq_placeholderTextAttributes]];
+        
     }
 }
 
@@ -180,12 +207,27 @@
                                                object:self];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textViewDidChange:)
+                                                 name:UITextViewTextDidChangeNotification
+                                               object:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(jsq_didReceiveTextViewNotification:)
                                                  name:UITextViewTextDidBeginEditingNotification
                                                object:self];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textViewDidBeginEditing:)
+                                                 name:UITextViewTextDidBeginEditingNotification
+                                               object:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(jsq_didReceiveTextViewNotification:)
+                                                 name:UITextViewTextDidEndEditingNotification
+                                               object:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(textViewDidEndEditing:)
                                                  name:UITextViewTextDidEndEditingNotification
                                                object:self];
 }
@@ -221,6 +263,25 @@
     return @{ NSFontAttributeName : self.font,
               NSForegroundColorAttributeName : self.placeHolderTextColor,
               NSParagraphStyleAttributeName : paragraphStyle };
+}
+
+- (UIViewController*) currentController {
+    return [self topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
+- (UIViewController*)topViewControllerWithRootViewController:(UIViewController*)rootViewController {
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController* tabBarController = (UITabBarController*)rootViewController;
+        return [self topViewControllerWithRootViewController:tabBarController.selectedViewController];
+    } else if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController* navigationController = (UINavigationController*)rootViewController;
+        return [self topViewControllerWithRootViewController:navigationController.visibleViewController];
+    } else if (rootViewController.presentedViewController) {
+        UIViewController* presentedViewController = rootViewController.presentedViewController;
+        return [self topViewControllerWithRootViewController:presentedViewController];
+    } else {
+        return rootViewController;
+    }
 }
 
 @end
